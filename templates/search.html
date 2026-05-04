@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Search Preferences</h1>
+    <form>
+        <label>Gender:</label>
+        <select>
+            <option>Female</option>
+            <option>Male</option>
+            <option>All</option>
+        </select>
+        <br><br>
+
+        <label>Weather:</label>
+        <select>
+            <option>Rainy</option>
+            <option>Sunny</option>
+            <option>Cold</option>
+            <option>Windy</option>
+            <option>All</option>
+        </select>
+        <br><br>
+
+        <label>Style:</label>
+        <select>
+            <option>Streetwear</option>
+            <option>Casual</option>
+            <option>Formal</option>
+            <option>Vintage</option>
+            <option>Sporty</option>
+            <option>All</option>
+        </select>
+        <br><br>
+
+        <label>Color:</label>
+        <select>
+            <option>Black</option>
+            <option>White</option>
+            <option>Blue</option>
+            <option>Red</option>
+            <option>Green</option>
+            <option>Beige</option>
+            <option>All</option>
+        </select>
+        <br><br>
+        <button class="btn" type="button">Search</button>
+    </form>
+{% endblock %}

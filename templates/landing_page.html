@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Welcome to Klothes</h1>
+    <p class="muted">
+        Discover outfits, save looks to your virtual wardrobe, and explore profiles.
+    </p>
+    <div class="divider"></div>
+
+    <div class="grid">
+        <div class="card">
+            <h3>Search profiles</h3>
+            <p class="muted">Find creators and view their outfits.</p>
+            <a class="btn" href="{% url 'pages:profile_search' %}">Search a Profile</a>
+        </div>
+        <div class="card">
+            <h3>Search outfits</h3>
+            <p class="muted">Filter by style, color, weather, and more.</p>
+            <a class="btn btn-secondary" href="{% url 'pages:search' %}">Search an Outfit</a>
+        </div>
+  </div>
+{% endblock %}

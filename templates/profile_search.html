@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Search for profiles</h2>
+
+   <div class="card">
+    <form action="{% url 'pages:profile_search' %}" method="get">
+      <label for="query">Username:</label>
+      <input id="query" type="text" name="query" placeholder="e.g. fashionalex" required>
+      <div class="row" style="margin-top: 12px;">
+        <button class="btn" type="submit">Search</button>
+        <a class="btn btn-secondary" href="{% url 'pages:landing' %}">Back</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Profile</h2>
+    <div class="card">
+        <div class="row">
+            {% if profile.profile_picture %}
+                <img class="avatar" src="{{ profile.profile_picture.url }}" alt="Profile picture">
+            {% else %}
+                <div class="avatar" style="background:#eee; display:flex; align-items:center; justify-content:center; font-weight:700;">
+                    ?
+                </div>
+            {% endif %}
+            
+            <div>
+                <h3 style="margin: 0;">{{ profile.user.username }}</h3>
+                <p class="muted" style="margin: 6px 0 0 0;">
+                    {{ profile.bio|default:"No bio yet." }}
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <h3>Recent Outfits</h3>
+    
+    {% if outfits %}
+        <div class="grid">
+            {% for outfit in outfits %}
+                <div class="card">
+                    <h3 style="margin-bottom: 8px;">{{ outfit.name }}</h3>
+                    <img class="img" src="{{ outfit.image.url }}" alt="Outfit image">
+                    <p class="muted" style="margin-top: 10px;">{{ outfit.description|default:"No description." }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="muted">No outfits yet.</p>
+    {% endif %}
+{% endblock %}

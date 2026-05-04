@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+    <h2>My Virtual Wardrobe (Liam)</h2>
+     <p class="muted">Your saved outfits!</p>
+    
+    <div class="row" style="margin-bottom: 12px;">
+        {% if request.GET.next %}
+            <a class="btn btn-secondary" href="{{ request.GET.next }}">Back</a>
+        {% else %}
+            <a class="btn btn-secondary" href="{% url 'pages:landing' %}">Back to Home</a>
+        {% endif %}
+    </div>
+    
+    <div class="divider"></div>
+    {% if saved_outfits %}
+    <div class="grid">
+        {% for outfit in saved_outfits %}
+        <div class="card">
+            <h3 style="margin-bottom: 8px;">{{ outfit.name }}</h3>
+            <img class="img" src="{{ outfit.image.url }}" alt="Outfit image">
+            
+            <p class="muted" style="margin-top: 10px;">
+                By: <strong>{{ outfit.owner.user.username }}</strong>
+            </p>
+            
+            <div class="row" style="margin-top: 12px;">
+                <a class="btn btn-danger" href="{% url 'pages:remove_from_wardrobe' pk=outfit.pk %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">Remove Outfit</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card">
+      <p class="muted" style="margin: 0;">No saved outfits yet.</p>
+    </div>
+    {% endif %}
+
+{% endblock %}

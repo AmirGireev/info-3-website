@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Search results for "{{ query }}"</h2>
+    
+    <div class="divider"></div>
+
+    <div class="grid">
+        <div class="card">
+          <h3>Fashionalex</h3>
+          <p class="muted">☞Streetwear-inspired outfits.</p>
+          <a class="btn" href="{% url 'pages:fashionalex' %}">View profile</a>
+        </div>
+    
+        <div class="card">
+          <h3>Alex_Fashion_Backup</h3>
+          <p class="muted">Backup!</p>
+          <a class="btn btn-secondary" href="{% url 'pages:fashionalex' %}">View profile</a>
+        </div>
+    
+        <div class="card">
+          <h3>TheRealAlex</h3>
+          <p class="muted">⤠Casual, everyday outfits⤟</p>
+          <a class="btn btn-secondary" href="{% url 'pages:fashionalex' %}">View profile</a>
+        </div>
+    </div>
+    
+    <div style="margin-top: 16px;">
+        <a class="btn btn-secondary" href="{% url 'pages:profile_search' %}">Back to search</a>
+    </div>
+{% endblock %}

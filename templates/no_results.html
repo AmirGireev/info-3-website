@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="card">>
+        <h2>No results found</h2>
+        <p class="muted">We couldn’t find a profile with the name <strong>"{{ query }}"</strong>.</p>
+
+        <div class="row" style="margin-top: 12px;">
+            <a class="btn" href="{% url 'pages:profile_search' %}">Try again</a>
+            <a class="btn btn-secondary" href="{% url 'pages:landing' %}">Home</a>
+        </div>
+
+    </div>
+{% endblock %}
