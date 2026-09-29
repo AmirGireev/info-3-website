@@ -11,31 +11,40 @@
                     ?
                 </div>
             {% endif %}
-            
+
             <div>
                 <h3 style="margin: 0;">{{ profile.user.username }}</h3>
+                {% if profile.style %}<span class="tag">{{ profile.style }}</span>{% endif %}
                 <p class="muted" style="margin: 6px 0 0 0;">
                     {{ profile.bio|default:"No bio yet." }}
                 </p>
             </div>
         </div>
+
+        {% if is_own %}
+            <div class="row" style="margin-top: 12px;">
+                <a class="btn" href="{% url 'pages:edit_profile' %}">Edit profile</a>
+            </div>
+        {% endif %}
     </div>
-    
+
     <div class="divider"></div>
-    
+
     <h3>Recent Outfits</h3>
-    
+
     {% if outfits %}
         <div class="grid">
             {% for outfit in outfits %}
-                <div class="card">
-                    <h3 style="margin-bottom: 8px;">{{ outfit.name }}</h3>
-                    <img class="img" src="{{ outfit.image.url }}" alt="Outfit image">
-                    <p class="muted" style="margin-top: 10px;">{{ outfit.description|default:"No description." }}</p>
-                </div>
+                {% include '_outfit_card.html' %}
             {% endfor %}
         </div>
     {% else %}
         <p class="muted">No outfits yet.</p>
+    {% endif %}
+
+    {% if not is_own %}
+        <div style="margin-top: 16px;">
+            <a class="btn btn-secondary" href="{% url 'pages:profile_search' %}">Back to search</a>
+        </div>
     {% endif %}
 {% endblock %}

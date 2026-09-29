@@ -1,95 +1,64 @@
+from django.contrib.auth.models import User
 from django.db import models
-# Create your models here.
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+# Options used both in the admin dropdowns and in the outfit search form,
+# so the values always match.
+SEX_OPTIONS = ["Female", "Male", "Unisex"]
+WEATHER_OPTIONS = ["Rainy", "Sunny", "Cold", "Windy"]
+STYLE_OPTIONS = ["Streetwear", "Casual", "Formal", "Vintage", "Sporty"]
+COLOR_OPTIONS = ["Black", "White", "Blue", "Red", "Green", "Beige"]
+
+
+def as_choices(values):
+    return [(value, value) for value in values]
+
 
 class UserProfile(models.Model):
-    """represents user profile displayed on profile and search pages notwendig für profile.html, edit_profile.html, profile_search.html"""
+    """Public profile of a user (bio, picture, style)."""
 
-    username = models.CharField(max_length=50, unique=True)
-
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     bio = models.TextField(blank=True)
-    profile_picture_url = models.URLField(blank=True)
-    banner_url = models.URLField(blank=True)
-    #personalization style tag (e.g. streetwear, casual...)
-    style = models.CharField(max_length=30, blank=True)
+    profile_picture = models.ImageField(upload_to="profiles/", blank=True)
+    style = models.CharField(max_length=30, blank=True, choices=as_choices(STYLE_OPTIONS))
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self) -> str: #admin readability
-        """Return readable string representation of the user profile for the Django admin."""
-        return self.username
-
-class ClothingItem(models.Model):
-    """ Represents single clothing item, can be owned by a user, displayed in wardrobe and used inside outfits  -> wardrobe.html, outfit_detail.html"""
-
-    class Visibility(models.TextChoices):
-        PRIVATE = "private", "Private"
-        PUBLIC = "public", "Public"
-
-    owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='clothingItems')
-    name = models.CharField(max_length=100)
-    image_url = models.URLField()
-
-    category = models.CharField(max_length=100)
-    color = models.CharField(max_length=30, blank=True)
-
-    visibility = models.CharField(max_length=10, choices=Visibility.choices, default=Visibility.PRIVATE)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-
     def __str__(self) -> str:
-        """Return readable string representation of the clothing item."""
-        return self.name
+        return self.user.username
 
 
 class Outfit(models.Model):
-    """Represents outfit created by user consisting of multiple or just one clothing items shown in search result, profile pages. notwendig für: results.html, outfit details, recent outfits"""
-    owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='outfits')
+    """An outfit posted by a user. Other users can save it to their wardrobe."""
 
-    image_url = models.URLField()
-    title = models.CharField(max_length=100, blank=True) #name outfit
+    owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="outfits")
+    image = models.ImageField(upload_to="outfits/")
+    title = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
 
-    #for search filter
-    style_genre = models.CharField(max_length=60, blank=True)
-    weather_suitability = models.CharField(max_length=60, blank=True)
-    sex = models.CharField(max_length=10, blank=True)
-    color = models.CharField(max_length=30, blank=True)
+    # Fields used by the search filters
+    style_genre = models.CharField(max_length=60, blank=True, choices=as_choices(STYLE_OPTIONS))
+    weather_suitability = models.CharField(max_length=60, blank=True, choices=as_choices(WEATHER_OPTIONS))
+    sex = models.CharField(max_length=10, blank=True, choices=as_choices(SEX_OPTIONS))
+    color = models.CharField(max_length=30, blank=True, choices=as_choices(COLOR_OPTIONS))
 
-    #clothing items that can make the outfit(nochmal anschauen ob wir das wollen!)
-    items = models.ManyToManyField(ClothingItem, blank=True, related_name='outfits')
-
+    # Profiles that saved this outfit -> profile.wardrobe.all()
+    saved_by = models.ManyToManyField(UserProfile, blank=True, related_name="wardrobe")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self) -> str:
-        """Return readable string representation of the outfit"""
-        return self.title if self.title else f"{self.owner.username}'s Outfit"
-
-#Sammelmodell
-class WardrobeCollection(models.Model):
-    """Represents a named wardrobe collection owned by a user. Collection can contain complete outfits and individual clothing items """
-    class Visibility(models.TextChoices):
-            PRIVATE = "private", "Private"
-            PUBLIC = "public", "Public"
-
-        # which profile owns collection
-    owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='collections')
-    name = models.CharField(max_length=100, blank=True)
-    description = models.TextField(blank=True)
-    # private/public
-    visibility = models.CharField(max_length=10, choices=Visibility.choices, default=Visibility.PRIVATE)
-    # can contain outfit or items
-    outfits = models.ManyToManyField(Outfit, blank=True, related_name='saved_in')
-    items = models.ManyToManyField(ClothingItem, blank=True, related_name='saved_in')
-
-    created_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        ordering = ["-created_at"]
 
     def __str__(self) -> str:
-        """Return readable string representation of the collection"""
-        return self.name if self.name else f"{self.owner.username}'s Collection"
+        return self.title or f"{self.owner.user.username}'s outfit"
 
 
-
-
+@receiver(post_save, sender=User)
+def create_profile_for_new_user(sender, instance, created, **kwargs):
+    """Every new user automatically gets an (empty) profile."""
+    if created:
+        UserProfile.objects.create(user=instance)

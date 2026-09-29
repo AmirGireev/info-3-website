@@ -1,0 +1,45 @@
+<div class="card">
+    <h3 style="margin-bottom: 8px;">
+        <a class="plain-link" href="{% url 'pages:outfit_detail' pk=outfit.pk %}">{{ outfit }}</a>
+    </h3>
+
+    {% if outfit.image %}
+        <a href="{% url 'pages:outfit_detail' pk=outfit.pk %}">
+            <img class="img" src="{{ outfit.image.url }}" alt="{{ outfit }}">
+        </a>
+    {% endif %}
+
+    <p class="muted" style="margin: 10px 0 6px 0;">
+        By: <a class="plain-link" href="{% url 'pages:profile_detail' username=outfit.owner.user.username %}"><strong>{{ outfit.owner.user.username }}</strong></a>
+    </p>
+
+    <div class="row" style="gap: 6px; margin-bottom: 8px;">
+        {% if outfit.style_genre %}<span class="tag">{{ outfit.style_genre }}</span>{% endif %}
+        {% if outfit.color %}<span class="tag">{{ outfit.color }}</span>{% endif %}
+        {% if outfit.weather_suitability %}<span class="tag">{{ outfit.weather_suitability }}</span>{% endif %}
+    </div>
+
+    {% if outfit.description %}
+        <p class="muted">{{ outfit.description|truncatechars:90 }}</p>
+    {% endif %}
+
+    <div class="row" style="margin-top: 12px;">
+        {% if user.is_authenticated %}
+            {% if outfit.pk in saved_ids %}
+                <form method="post" action="{% url 'pages:remove_from_wardrobe' pk=outfit.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next_url|default:request.get_full_path }}">
+                    <button class="btn btn-danger" type="submit">Remove from Wardrobe</button>
+                </form>
+            {% else %}
+                <form method="post" action="{% url 'pages:add_to_wardrobe' pk=outfit.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next_url|default:request.get_full_path }}">
+                    <button class="btn" type="submit">Add to Wardrobe</button>
+                </form>
+            {% endif %}
+        {% else %}
+            <a class="btn" href="{% url 'pages:login' %}?next={{ request.get_full_path|urlencode }}">Log in to save</a>
+        {% endif %}
+    </div>
+</div>

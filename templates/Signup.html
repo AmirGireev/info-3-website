@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Edit profile</h2>
+    <h2>Create account</h2>
 
     <div class="card">
-        <form method="post" enctype="multipart/form-data">
+        <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
             <div class="row" style="margin-top: 12px;">
-                <button class="btn" type="submit">Save</button>
-                <a class="btn btn-secondary" href="{% url 'pages:profile_view' %}">Cancel</a>
+                <button class="btn" type="submit">Sign up</button>
+                <a class="btn btn-secondary" href="{% url 'pages:login' %}">I already have an account</a>
             </div>
         </form>
     </div>

@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+ 
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'pages',
-    'profiles',
 ]
 
 MIDDLEWARE = [
@@ -101,6 +104,23 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+USE_CLOUDINARY = bool(os.environ.get("CLOUDINARY_CLOUD_NAME"))
+ 
+if USE_CLOUDINARY:
+    # cloudinary_storage must come BEFORE django.contrib.staticfiles
+    INSTALLED_APPS.insert(INSTALLED_APPS.index("django.contrib.staticfiles"), "cloudinary_storage")
+    INSTALLED_APPS.append("cloudinary")
+ 
+    CLOUDINARY_STORAGE = {
+        "CLOUD_NAME": os.environ["CLOUDINARY_CLOUD_NAME"],
+        "API_KEY": os.environ["CLOUDINARY_API_KEY"],
+        "API_SECRET": os.environ["CLOUDINARY_API_SECRET"],
+    }
+    STORAGES = {
+        "default": {"BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"},
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    }
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
@@ -118,3 +138,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Uploaded images (outfits, profile pictures). Used locally when no Cloudinary keys are set.
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Login / logout
+LOGIN_URL = 'pages:login'
+LOGIN_REDIRECT_URL = 'pages:landing'
+LOGOUT_REDIRECT_URL = 'pages:landing'
