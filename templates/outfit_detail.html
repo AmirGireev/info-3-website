@@ -41,6 +41,11 @@
                 {% else %}
                     <a class="btn" href="{% url 'pages:login' %}?next={{ request.get_full_path|urlencode }}">Log in to save</a>
                 {% endif %}
+                
+                {% if outfit.owner.user == request.user %}
+                    <a href="{% url 'pages:delete_outfit' pk=outfit.pk %}" class="btn" style="background-color: #dc3545; color: white;">Delete Outfit</a>
+                {% endif %}
+
                 <a class="btn btn-secondary" href="javascript:history.back()">Back</a>
             </div>
         </div>

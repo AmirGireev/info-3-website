@@ -21,9 +21,10 @@
             </div>
         </div>
 
-        {% if is_own %}
-            <div class="row" style="margin-top: 12px;">
+  {% if is_own %}
+            <div class="row" style="margin-top: 12px; gap: 10px;">
                 <a class="btn" href="{% url 'pages:edit_profile' %}">Edit profile</a>
+                <a class="btn btn-primary" href="{% url 'pages:add_outfit' %}">Add Outfit</a>
             </div>
         {% endif %}
     </div>

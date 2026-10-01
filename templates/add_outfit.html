@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Add New Outfit</h2>
+    
+    <div class="card">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {{ form.as_p }}
+            
+            <div style="margin-top: 16px;">
+                <button type="submit" class="btn btn-primary">Upload Outfit</button>
+                <a href="{% url 'pages:profile_view' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

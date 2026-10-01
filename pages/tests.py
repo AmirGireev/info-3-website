@@ -8,7 +8,7 @@ from .models import Outfit
 class SearchTests(TestCase):
     def setUp(self):
         user = User.objects.create_user("alex", password="pw")
-        self.profile = user.profile  # created automatically by the signal
+        self.profile = user.profile 
         Outfit.objects.create(
             owner=self.profile, image="outfits/a.jpg", title="Street look",
             style_genre="Streetwear", color="Black", sex="Male",

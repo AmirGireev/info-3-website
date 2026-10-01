@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Delete Outfit</h2>
+    
+    <div class="card">
+        <p>Are you sure you want to delete your outfit "<strong>{{ object.title }}</strong>"?</p>
+        <p class="muted">This action cannot be undone.</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div style="margin-top: 16px; gap: 10px; display: flex;">
+                <button type="submit" class="btn" style="background-color: #dc3545; color: white;">Yes, delete outfit</button>
+                <a href="{% url 'pages:outfit_detail' object.pk %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

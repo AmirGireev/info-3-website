@@ -1,10 +1,11 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
+
 from .views import (
     AddToWardrobeView, EditProfileView, LandingView, OutfitDetailView,
     ProfileView, RemoveFromWardrobeView, SearchResultsView, SearchView,
-    SignUpView, WardrobeView, profile_search,
+    SignUpView, WardrobeView, profile_search, AddOutfitView, DeleteOutfitView
 )
 
 app_name = "pages"
@@ -21,6 +22,8 @@ urlpatterns = [
     path("search/", SearchView.as_view(), name="search"),
     path("results/", SearchResultsView.as_view(), name="results"),
     path("outfit/<int:pk>/", OutfitDetailView.as_view(), name="outfit_detail"),
+    path("outfit/add/", AddOutfitView.as_view(), name="add_outfit"),
+    path("outfit/<int:pk>/delete/", DeleteOutfitView.as_view(), name="delete_outfit"),
 
     # Profiles
     path("profile/", ProfileView.as_view(), name="profile_view"),

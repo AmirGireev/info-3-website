@@ -2,22 +2,19 @@ from urllib.parse import quote
 
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import redirect_to_login
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, DetailView, TemplateView, UpdateView, View
-
+from django.views.generic import CreateView, DetailView, TemplateView, UpdateView, View,DeleteView
 from .models import (
     COLOR_OPTIONS, SEX_OPTIONS, STYLE_OPTIONS, WEATHER_OPTIONS,
     Outfit, UserProfile,
 )
 
 
-# --------------------------------------------------------------------------
-# Helpers
-# --------------------------------------------------------------------------
+
 def get_current_profile(request):
     """Profile of the logged-in user, or None if nobody is logged in."""
     if not request.user.is_authenticated:
@@ -46,9 +43,6 @@ class SavedIdsMixin:
         return context
 
 
-# --------------------------------------------------------------------------
-# Open pages (no login needed)
-# --------------------------------------------------------------------------
 class LandingView(TemplateView):
     template_name = "landing_page.html"
 
@@ -97,7 +91,7 @@ class SearchResultsView(SavedIdsMixin, TemplateView):
 
         sex = params.get("sex", "").strip()
         if sex:
-            # "Female" should also show unisex outfits
+            
             outfits = outfits.filter(Q(sex__iexact=sex) | Q(sex__iexact="Unisex"))
             active_filters.append(sex)
 
@@ -159,9 +153,6 @@ class ProfileView(SavedIdsMixin, TemplateView):
         return context
 
 
-# --------------------------------------------------------------------------
-# Accounts
-# --------------------------------------------------------------------------
 class SignUpView(CreateView):
     form_class = UserCreationForm
     template_name = "signup.html"
@@ -177,9 +168,6 @@ class SignUpView(CreateView):
         return redirect("pages:landing")
 
 
-# --------------------------------------------------------------------------
-# Pages that need a login
-# --------------------------------------------------------------------------
 class EditProfileView(LoginRequiredMixin, UpdateView):
     model = UserProfile
     fields = ["bio", "style", "profile_picture"]
@@ -213,3 +201,25 @@ class RemoveFromWardrobeView(LoginRequiredMixin, View):
         outfit = get_object_or_404(Outfit, pk=pk)
         outfit.saved_by.remove(get_current_profile(request))
         return redirect_to_wardrobe(request)
+
+class AddOutfitView(LoginRequiredMixin, CreateView):
+    model = Outfit
+    fields = ["title", "description", "image", "sex", "weather_suitability", "style_genre", "color"]
+    template_name = "add_outfit.html"
+
+    def form_valid(self, form):
+        form.instance.owner = get_current_profile(self.request)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("pages:profile_view")
+
+class DeleteOutfitView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Outfit
+    template_name = "delete_outfit.html"
+    success_url = reverse_lazy("pages:profile_view")
+
+    def test_func(self):
+        outfit = self.get_object()
+        profile = get_current_profile(self.request)
+        return outfit.owner == profile

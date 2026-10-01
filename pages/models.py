@@ -3,8 +3,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-# Options used both in the admin dropdowns and in the outfit search form,
-# so the values always match.
+
 SEX_OPTIONS = ["Female", "Male", "Unisex"]
 WEATHER_OPTIONS = ["Rainy", "Sunny", "Cold", "Windy"]
 STYLE_OPTIONS = ["Streetwear", "Casual", "Formal", "Vintage", "Sporty"]
@@ -38,13 +37,11 @@ class Outfit(models.Model):
     title = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
 
-    # Fields used by the search filters
     style_genre = models.CharField(max_length=60, blank=True, choices=as_choices(STYLE_OPTIONS))
     weather_suitability = models.CharField(max_length=60, blank=True, choices=as_choices(WEATHER_OPTIONS))
     sex = models.CharField(max_length=10, blank=True, choices=as_choices(SEX_OPTIONS))
     color = models.CharField(max_length=30, blank=True, choices=as_choices(COLOR_OPTIONS))
 
-    # Profiles that saved this outfit -> profile.wardrobe.all()
     saved_by = models.ManyToManyField(UserProfile, blank=True, related_name="wardrobe")
 
     created_at = models.DateTimeField(auto_now_add=True)
