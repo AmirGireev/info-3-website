@@ -1,10 +1,20 @@
-https://amirgireev123.pythonanywhere.com/
+A prototype website for getting style inspiration.
 
-A Prototype of a Website where you can get Style inspiration.
+Live demo: https://amirgireev123.pythonanywhere.com/
 
-You register and login so that you can Customize your own profile search 
-for profiles of other persons or for outfits on the website itself.
-to find another User type "fashionalex" in the search bar.
-You can add his Outfits to your "virtual warderobe."
-You can also search for outfits by hashtags.
+
+
+## Features
+
+- Sign up and log in to customize your profile (bio, style, profile picture).
+
+- Upload your own outfits and delete them again.
+
+- Search outfits by keyword, or filter by gender, weather, style and color.
+
+- Search for other users. Try typing "fashionalex" in the profile search.
+
+- Save outfits to your virtual wardrobe and remove them again.
+
+- Browsing and searching work without an account. Saving outfits and editing your profile require login.
 
