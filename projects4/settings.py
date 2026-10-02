@@ -24,10 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-57)yw7^51@ypb4@u3s66ucz!#kz6r%^4#%46rj(dsz5s6mii^%'
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-only-insecure-key")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "0") == "1"
 
 ALLOWED_HOSTS = ['AmirGireev123.pythonanywhere.com', 'amirgireev123.pythonanywhere.com', 'localhost', '127.0.0.1',]
 
@@ -107,7 +106,6 @@ AUTH_PASSWORD_VALIDATORS = [
 USE_CLOUDINARY = bool(os.environ.get("CLOUDINARY_CLOUD_NAME"))
  
 if USE_CLOUDINARY:
-    # cloudinary_storage must come BEFORE django.contrib.staticfiles
     INSTALLED_APPS.insert(INSTALLED_APPS.index("django.contrib.staticfiles"), "cloudinary_storage")
     INSTALLED_APPS.append("cloudinary")
  
@@ -138,6 +136,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Uploaded images (outfits, profile pictures). Used locally when no Cloudinary keys are set.
 MEDIA_URL = '/media/'
